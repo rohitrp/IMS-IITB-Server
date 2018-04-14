@@ -44,8 +44,29 @@ class Signup(Resource):
         else:
             return {'status': 0}
 
+class CreatePaper(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('email', type=str)
+    parser.add_argument('title', type=str)
+    parser.add_argument('body', type=str)
+
+    def post(self):
+        data = self.parser.parse_args()
+
+        papers = db.papers
+
+        count = db.papers.count({'email': data['email']})
+        data['id'] = count+1
+
+        print(data)
+        if papers.insert_one(data):
+            return {'status': 1}
+        else:
+            return {'status': 0}
+
 api.add_resource(Login, '/api/login/')
 api.add_resource(Signup,'/api/signup/')
+api.add_resource(CreatePaper, '/api/papers/create/')
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
