@@ -64,8 +64,19 @@ class CreatePaper(Resource):
         else:
             return {'status': 0}
 
+class Papers(Resource):
+    def get(self):
+        data = request.args
+        email = data['email']
+
+        papers = db.papers.find({'email': email})
+
+        papers = [{'title': paper['title'], 'id': paper['id']} for paper in papers]
+        return dumps(papers)
+
 api.add_resource(Login, '/api/login/')
 api.add_resource(Signup,'/api/signup/')
+api.add_resource(Papers, '/api/papers/')
 api.add_resource(CreatePaper, '/api/papers/create/')
 
 if __name__ == '__main__':
